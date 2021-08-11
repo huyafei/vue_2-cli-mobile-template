@@ -121,6 +121,7 @@ function addStyleResource(rule) {
     .options({
       patterns: [
         path.resolve(__dirname, "./src/assets/styles/less/color.less"),
+        path.resolve(__dirname, "./src/assets/styles/less/mixin.less"),
       ],
     });
 }
