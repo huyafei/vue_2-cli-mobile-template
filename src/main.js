@@ -7,7 +7,7 @@ import "lib-flexible";
 import momment from "moment";
 import axios from "./utils/axios";
 import Cookies from "js-cookie";
-import echarts from "echarts";
+import * as echarts from "echarts";
 import * as filters from "./filters";
 import * as componetns from "./components";
 

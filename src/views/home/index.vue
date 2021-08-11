@@ -6,7 +6,7 @@
     <van-button type="warning">警告按钮</van-button>
     <van-button type="danger">危险按钮</van-button>
     <br />
-    <div id="echars" style="width: 500px; height: 500px"></div>
+    <div id="echars"></div>
   </div>
 </template>
 
@@ -47,4 +47,8 @@ export default {
   },
 };
 </script>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+#echars{
+  height: 300px;
+}
+</style>

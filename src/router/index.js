@@ -9,5 +9,10 @@ const routes = [...other, ...main];
 const router = new VueRouter({
   routes,
 });
-
+router.afterEach((to) => {
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
+  window.scrollTo(0, 0);
+});
 export default router;

@@ -1,10 +1,13 @@
 const path = require("path");
-
 const CompressionPlugin = require("compression-webpack-plugin");
+const pxtorem = require("postcss-pxtorem");
+const version = require('./package.json').version;
+const publicPath=process.env.NODE_ENV === "production" ? "/" : "./"
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
+  publicPath,
   // outputDir: 在npm run build时 生成文件的目录 type:string, default:'dist'
   outputDir: "dist",
+  //以多页模式构建应用程序 如需要请参考 https://cli.vuejs.org/zh/config/#pages
   // pages:{ type:Object,Default:undfind },
   // eslint-loader是否在保存的时候检查
   lintOnSave: true,
@@ -50,7 +53,12 @@ module.exports = {
         // data: `@import "~@/assets/less/color.less";`
       },
       postcss: {
-        plugins: [],
+        plugins: [
+          pxtorem({
+            rootValue: 37.5,
+            propList: ["*"],
+          }),
+        ],
       },
     },
   },
@@ -71,21 +79,30 @@ module.exports = {
   },
   // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
   chainWebpack: (config) => {
+    /**
+     * 删除懒加载模块的 prefetch preload，降低带宽压力
+     * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#prefetch
+     * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#preload
+     * 而且预渲染时生成的 prefetch 标签是 modern 版本的，低版本浏览器是不需要的
+     */
+    config.plugins.delete('prefetch').delete('preload')
     const types = ["vue-modules", "vue", "normal-modules", "normal"];
     types.forEach((type) =>
       addStyleResource(config.module.rule("less").oneOf(type))
     );
+    config.when(process.env.NODE_ENV === 'development', config => {
+      config.devtool('cheap-source-map')//cheap-source-map--不显示源码 、source-map--显示源码 、 eval--最快的编译办法
+    })
     if (process.env.NODE_ENV === "production") {
-      // 为生产环境修改配置...
-      return {
-        plugins: [
-          new CompressionPlugin({
-            test: /\.js$|\.css|\.less/, // 匹配文件名
-            threshold: 10240, // 对超过10k的数据压缩
-            deleteOriginalAssets: false, // 不删除源文件
-          }),
-        ],
-      };
+      // 为生产环境修改配置... process.env.NODE_ENV !== 'development'
+      config.plugins.push(
+        new CompressionPlugin({
+          test: /\.js$|\.css|\.less/, // 匹配文件名
+          threshold: 10240, // 对超过10k的数据压缩
+          minRatio: 0.8,// 只有压缩率小于这个值的资源才会被处理
+          deleteOriginalAssets: false, // 不删除源文件
+        }),
+      )
     } else {
       // 为开发环境修改配置...
     }
