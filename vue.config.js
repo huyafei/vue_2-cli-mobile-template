@@ -97,7 +97,7 @@ module.exports = {
       // 为生产环境修改配置... process.env.NODE_ENV !== 'development'
       config.plugins.push(
         new CompressionPlugin({
-          test: /\.js$|\.css|\.less/, // 匹配文件名
+          test: /\.js$|\.html$|\.css|\.less/, // 匹配文件名
           threshold: 10240, // 对超过10k的数据压缩
           minRatio: 0.8,// 只有压缩率小于这个值的资源才会被处理
           deleteOriginalAssets: false, // 不删除源文件
