@@ -1,7 +1,7 @@
 const other = [
   {
     path: "/",
-    redirect: "/home/index",
+    redirect: "/home",
   },
   {
     path: "/login",
