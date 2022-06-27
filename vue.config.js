@@ -1,7 +1,6 @@
 const path = require("path");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-const pxtorem = require("postcss-pxtorem");
 const publicPath = process.env.VUE_APP_publicPath;
 
 module.exports = {
@@ -19,25 +18,26 @@ module.exports = {
   transpileDependencies: [],
   // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   productionSourceMap: false,
+  // 参考https://webpack.js.org/configuration/dev-server/
   devServer: {
-    disableHostCheck: true, // 花生壳显示Invalid Host header让其不检查hostname。
-    https: false, // https:{type:Boolean}
-    open: true, // 配置自动启动浏览器
+    // allowedHosts:[], // 允许访问的域名
+    // https: false, // https:{type:Boolean}
+    // open: true, // 配置自动启动浏览器
     // proxy: "http://localhost:9527" // 配置跨域处理,只有一个代理
-    //端口
-    port: 9527,
+    port: 9527, // 端口
     // host:'0.0.0.0', // 设置0.0.0.0则所有的地址都能访问
     // host: 'wxtest.com',
+    // 配置或多个代理
     // proxy: {
-    // "/api": {
-    //   target: "http://192.168.0.188:8080",// 设置调用的接口域名和端口号
-    //   ws: true, // 代理websocket
-    //   changeOrigin: true,
-    //   pathRewrite: { // 路径重写
-    //     "^/api": ""
+    //   "/api": {
+    //     target: "http://192.168.0.188:8080",// 设置调用的接口域名和端口号
+    //     ws: true, // 代理websocket
+    //     changeOrigin: true,
+    //     pathRewrite: { // 路径重写
+    //       "^/api": ""
+    //     }
     //   }
     // }
-    // } // 配置多个代理,
   },
   // css相关配置
   css: {
@@ -63,14 +63,7 @@ module.exports = {
         // @/ 是 src/ 的别名
         // data: `@import "~@/assets/less/color.less";`
       },
-      postcss: {
-        plugins: [
-          pxtorem({
-            rootValue: 37.5,
-            propList: ["*"],
-          }),
-        ],
-      },
+      postcss: {},
     },
   },
   configureWebpack: () => {
@@ -89,7 +82,7 @@ module.exports = {
       plugins: [
         // 配置compression-webpack-plugin压缩
         new CompressionWebpackPlugin({
-          filename: "[path].gz[query]", // 旧版本为assets，现为filename
+          filename: '[path][base].gz', // 旧版本为assets，现为filename
           algorithm: "gzip",
           test: /\.jpg$|\.js$|\.html$|\.css$|\.less/,
           threshold: 10240, // 对超过10k的数据压缩
@@ -135,6 +128,7 @@ module.exports = {
     }
     if (process.env.NODE_ENV === "production") {
       // 为生产环境修改配置... process.env.NODE_ENV !== 'development'
+      // 图片压缩
       config.module
         .rule("images")
         .use("image-webpack-loader")
@@ -157,6 +151,7 @@ module.exports = {
     // ...
   },
 };
+
 function addStyleResource(rule) {
   rule
     .use("style-resource")
