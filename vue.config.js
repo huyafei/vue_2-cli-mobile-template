@@ -1,9 +1,10 @@
+const { defineConfig } = require("@vue/cli-service");
 const path = require("path");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const publicPath = process.env.VUE_APP_publicPath;
 
-module.exports = {
+module.exports = defineConfig({
   // 部署应用包时的基本 URL,默认:/ https://cli.vuejs.org/zh/config/#publicpath
   publicPath,
   // outputDir: 在npm run build时 生成文件的目录 type:string, default:'dist'
@@ -14,7 +15,7 @@ module.exports = {
   lintOnSave: true,
   // 是否使用包含运行时编译器的Vue核心的构建
   runtimeCompiler: false,
-  // 默认情况下 babel-loader 会忽略所有 node_modules 中的文件。如果你想要通过 Babel 显式转译一个依赖，可以在这个选项中列出来
+  // 默认 fasle，默认情况下 babel-loader 会忽略所有 node_modules 中的文件。如果你想要通过 Babel 显式转译一个依赖，可以在这个选项中列出来
   transpileDependencies: [],
   // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   productionSourceMap: false,
@@ -24,7 +25,7 @@ module.exports = {
     // https: false, // https:{type:Boolean}
     // open: true, // 配置自动启动浏览器
     // proxy: "http://localhost:9527" // 配置跨域处理,只有一个代理
-    port: 9527, // 端口
+    port: 9527 // 端口
     // host:'0.0.0.0', // 设置0.0.0.0则所有的地址都能访问
     // host: 'wxtest.com',
     // 配置或多个代理
@@ -63,8 +64,8 @@ module.exports = {
         // @/ 是 src/ 的别名
         // data: `@import "~@/assets/less/color.less";`
       },
-      postcss: {},
-    },
+      postcss: {}
+    }
   },
   configureWebpack: () => {
     //返回一个将要合并的对象
@@ -77,19 +78,19 @@ module.exports = {
         alias: {
           // "@src": path.resolve("src"),
           // "@components": path.resolve("src/components"),
-        },
+        }
       },
       plugins: [
         // 配置compression-webpack-plugin压缩
         new CompressionWebpackPlugin({
-          filename: '[path][base].gz', // 旧版本为assets，现为filename
+          filename: "[path][base].gz", // 旧版本为assets，现为filename
           algorithm: "gzip",
           test: /\.jpg$|\.js$|\.html$|\.css$|\.less/,
           threshold: 10240, // 对超过10k的数据压缩
           // deleteOriginalAssets: true, // 删除源文件，不建议开启
-          minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
-        }),
-      ],
+          minRatio: 0.8 // 只有压缩率小于这个值的资源才会被处理
+        })
+      ]
     };
   },
   // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
@@ -119,10 +120,10 @@ module.exports = {
             compress: {
               drop_console: true,
               drop_debugger: false,
-              pure_funcs: ["console.log"], // 生产环境自动删除console
+              pure_funcs: ["console.log"] // 生产环境自动删除console
             },
-            warnings: false,
-          },
+            warnings: false
+          }
         })
       );
     }
@@ -137,7 +138,7 @@ module.exports = {
           mozjpeg: { progressive: true, quality: 65 },
           optipng: { enabled: false },
           pngquant: { quality: [0.65, 0.9], speed: 4 },
-          gifsicle: { interlaced: false },
+          gifsicle: { interlaced: false }
           // webp: { quality: 75 } 大大减少体积，但在ios存在兼容问题，不用
         });
     } else {
@@ -149,8 +150,8 @@ module.exports = {
   // 第三方插件配置
   pluginOptions: {
     // ...
-  },
-};
+  }
+});
 
 function addStyleResource(rule) {
   rule
@@ -159,7 +160,7 @@ function addStyleResource(rule) {
     .options({
       patterns: [
         path.resolve(__dirname, "./src/assets/styles/less/color.less"),
-        path.resolve(__dirname, "./src/assets/styles/less/mixin.less"),
-      ],
+        path.resolve(__dirname, "./src/assets/styles/less/mixin.less")
+      ]
     });
 }
