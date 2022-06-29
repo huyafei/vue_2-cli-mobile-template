@@ -1,8 +1,22 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Cookies from "js-cookie";
+import Cookies from "@/utils/cookie";
 import main from "./main";
 import other from "./other";
+
+// 处理路由跳转报错
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location, resolve, reject) {
+  if (resolve || reject) return originalPush.call(this, location, resolve, reject);
+  return originalPush.call(this, location).catch((e) => {
+  });
+};
+const originalReplace = VueRouter.prototype.replace;
+VueRouter.prototype.replace = function replace(location, resolve, reject) {
+  if (resolve || reject) return originalReplace.call(this, location, resolve, reject);
+  return originalPush.call(this, location).catch((e) => {
+  });
+};
 Vue.use(VueRouter);
 
 const routes = [...other, ...main];
@@ -16,34 +30,35 @@ const router = new VueRouter({
     } else {
       return { x: 0, y: 0 };
     }
-  },
+  }
 });
+
+
 router.beforeEach(async (to, from, next) => {
-  console.log(to, from);
   if (["Login", "Page404", "Page401"].includes(to.name)) {
     next();
   } else {
-    if (from.name == null && to.name !== "Login") {
-      //刷新页面重新登陆，更新权限
-      next({
-        name: "Login",
-        query: {
-          redirect: to.fullPath,
-        },
-      });
-    } else {
+    // 刷新页面重新登陆，更新权限
+    // if (!from.name && to.name !== "Login") {
+    //   next({
+    //     name: "Login",
+    //     query: {
+    //       redirect: to.fullPath
+    //     }
+    //   });
+    // } else {
       const token = Cookies.get("token");
-      if (token && token !== "undefined") {
+      if (token) {
         next();
       } else {
         next({
           name: "Login",
           query: {
-            redirect: to.fullPath,
-          },
+            redirect: to.fullPath
+          }
         });
       }
-    }
+    // }
   }
 });
 router.afterEach((to) => {

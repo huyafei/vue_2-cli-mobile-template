@@ -3,20 +3,15 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import "lib-flexible";
-
-import momment from "moment";
 import axios from "./utils/axios";
-import Cookies from "js-cookie";
+import Cookies from "@/utils/cookie";
+import momment from "moment";
+import vConsole from "vconsole";
+
 import * as echarts from "echarts";
 import * as filters from "./filters";
 import * as componetns from "./components";
 
-/**
- * vant
- */
-import Vant from "vant";
-import "vant/lib/index.css";
-Vue.use(Vant);
 /**
  * css
  */
@@ -27,16 +22,36 @@ import "./assets/styles/css/reset.css";
  */
 import "./assets/styles/less/index.less";
 
+/**
+ * vant
+ */
+import { Button, Search, Tabbar, TabbarItem } from "vant";
+
+Vue.use(Button)
+  .use(Search)
+  .use(Tabbar)
+  .use(TabbarItem);
+
+
+// 调接口可以去掉
+if (process.env.NODE_ENV === "development") {
+  require("../mock");
+}
+
+if (["dev", "uat"].includes(process.env.VUE_APP_env)) {
+  Vue.prototype.$vConsole = new vConsole();
+}
+
 Vue.prototype.$axios = axios;
 Vue.prototype.$cookies = Cookies;
-Vue.prototype.$echarts = echarts;
 Vue.prototype.$momment = momment;
-/**
- * 过滤器
- */
+Vue.prototype.$echarts = echarts;
+
+// 注册全局过滤器
 Object.keys(filters).forEach((key) => {
   Vue.filter(key, filters[key]);
 });
+
 /**
  * 自定义组件
  */
@@ -49,5 +64,5 @@ Vue.config.productionTip = false;
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: (h) => h(App)
 }).$mount("#app");

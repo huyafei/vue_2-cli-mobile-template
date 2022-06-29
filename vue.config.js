@@ -1,8 +1,24 @@
 const { defineConfig } = require("@vue/cli-service");
 const path = require("path");
+// 压缩资源 html、js、css...
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+// 压缩 js 去除 console.log
+const UglifyjsWebpackPlugin = require("uglifyjs-webpack-plugin");
+
 const publicPath = process.env.VUE_APP_publicPath;
+const isProduction = process.env.NODE_ENV === "production";
+const resolve = dir => path.resolve(__dirname, dir);
+
+// 样式和js的CDN外链，会插入到index.html中
+const cdn = {
+  css: [],
+  js: []
+};
+
+// 外部扩展，即外部引入对象与内部引用时的对象配置
+// 例如：vue: 'Vue', 对应 import Vue from 'vue' 来说
+// 属性名 vue 为要从外部引入时的 vue 对象，Vue为引入后的对应的全局变量。
+const externals = {};
 
 module.exports = defineConfig({
   // 部署应用包时的基本 URL,默认:/ https://cli.vuejs.org/zh/config/#publicpath
@@ -24,10 +40,11 @@ module.exports = defineConfig({
     // allowedHosts:[], // 允许访问的域名
     // https: false, // https:{type:Boolean}
     // open: true, // 配置自动启动浏览器
-    // proxy: "http://localhost:9527" // 配置跨域处理,只有一个代理
     port: 9527 // 端口
     // host:'0.0.0.0', // 设置0.0.0.0则所有的地址都能访问
     // host: 'wxtest.com',
+    // proxy: "http://localhost:9527" // 配置跨域处理,只有一个代理
+
     // 配置或多个代理
     // proxy: {
     //   "/api": {
@@ -67,33 +84,47 @@ module.exports = defineConfig({
       postcss: {}
     }
   },
-  configureWebpack: () => {
-    //返回一个将要合并的对象
-    return {
-      output: {
-        // filename: `js/[name].${_version}.${_timestamp}.js`,
-        // chunkFilename: `js/[name].${_version}.${_timestamp}.js`,
-      },
+  // webpack 配置， 可以是{}，或者是函数返回合并对象或直接修改(config ) => {}
+  configureWebpack: (config) => {
+    let newConfig = {
+      // name: "",
+      externals: externals,
       resolve: {
         alias: {
-          // "@src": path.resolve("src"),
-          // "@components": path.resolve("src/components"),
+          "@": resolve("src"),
+          "@utils": resolve("src/utils"),
+          "@api": resolve("src/api"),
+          "@components": resolve("src/components"),
+          "@views": resolve("src/views")
         }
       },
-      plugins: [
-        // 配置compression-webpack-plugin压缩
+      plugins: []
+    };
+    //返回一个将要合并的对象
+    if (isProduction) {
+      // 为生产环境修改配置...
+      newConfig.output = {
+        // filename: `js/[name].${_version}.${_timestamp}.js`,
+        // chunkFilename: `js/[name].${_version}.${_timestamp}.js`,
+      };
+      newConfig.plugins.push(
+        // 配置 compression-webpack-plugin 压缩
         new CompressionWebpackPlugin({
-          filename: "[path][base].gz", // 旧版本为assets，现为filename
-          algorithm: "gzip",
-          test: /\.jpg$|\.js$|\.html$|\.css$|\.less/,
+          filename: "[path][base].gz", // 旧压缩后的文件名(保持原文件名，后缀加.gz)
+          algorithm: "gzip", // 使用gzip压缩
+          test: /\.jpg$|\.js$|\.html$|\.css$|\.less/, // 匹配文件名
           threshold: 10240, // 对超过10k的数据压缩
-          // deleteOriginalAssets: true, // 删除源文件，不建议开启
+          deleteOriginalAssets: false, // 删除源文件，不建议开启
           minRatio: 0.8 // 只有压缩率小于这个值的资源才会被处理
         })
-      ]
-    };
+      );
+    } else {
+      // 为开发环境修改配置...
+    }
+
+    return { ...newConfig };
   },
-  // 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
+  // webpack 链式操作配置，是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。允许对内部的 webpack 配置进行更细粒度的修改。
   chainWebpack: (config) => {
     /**
      * 删除懒加载模块的 prefetch preload，降低带宽压力
@@ -101,7 +132,9 @@ module.exports = defineConfig({
      * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#preload
      * 而且预渲染时生成的 prefetch 标签是 modern 版本的，低版本浏览器是不需要的
      */
-    config.plugins.delete("prefetch").delete("preload");
+    config.plugins
+      .delete("prefetch")
+      .delete("preload");
     const types = ["vue-modules", "vue", "normal-modules", "normal"];
     types.forEach((type) =>
       addStyleResource(config.module.rule("less").oneOf(type))
@@ -109,10 +142,20 @@ module.exports = defineConfig({
     config.when(process.env.NODE_ENV === "development", (config) => {
       config.devtool("cheap-source-map"); //cheap-source-map--不显示源码 、source-map--显示源码 、 eval--最快的编译办法
     });
-    if (process.env.VUE_APP_env === "prd") {
+
+    /**
+     * 添加CDN参数到htmlWebpackPlugin配置中
+     */
+    config.plugin("html").tap(args => {
+      args[0].cdn = cdn;
+      return args;
+    });
+
+    if (isProduction) {
+      // 为生产环境修改配置...
       // 打包优化，去除console.log
       config.optimization.minimizer.push(
-        new UglifyJsPlugin({
+        new UglifyjsWebpackPlugin({
           sourceMap: false,
           // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
           parallel: true,
@@ -120,29 +163,27 @@ module.exports = defineConfig({
             compress: {
               drop_console: true,
               drop_debugger: false,
-              pure_funcs: ["console.log"] // 生产环境自动删除console
+              pure_funcs: ["console.log"] // 生产环境自动删除 console
             },
             warnings: false
           }
         })
       );
-    }
-    if (process.env.NODE_ENV === "production") {
-      // 为生产环境修改配置... process.env.NODE_ENV !== 'development'
       // 图片压缩
-      config.module
-        .rule("images")
-        .use("image-webpack-loader")
-        .loader("image-webpack-loader")
-        .options({
-          mozjpeg: { progressive: true, quality: 65 },
-          optipng: { enabled: false },
-          pngquant: { quality: [0.65, 0.9], speed: 4 },
-          gifsicle: { interlaced: false }
-          // webp: { quality: 75 } 大大减少体积，但在ios存在兼容问题，不用
-        });
+      // config.module
+      //   .rule("images")
+      //   .use("image-webpack-loader")
+      //   .loader("image-webpack-loader")
+      //   .options({
+      //     mozjpeg: { progressive: true, quality: 65 },
+      //     optipng: { enabled: false },
+      //     pngquant: { quality: [0.65, 0.9], speed: 4 },
+      //     gifsicle: { interlaced: false }
+      //     // webp: { quality: 75 } 大大减少体积，但在ios存在兼容问题，不用
+      //   });
     } else {
       // 为开发环境修改配置...
+
     }
   },
   // PWA 插件相关配置

@@ -25,9 +25,12 @@ const user = {
      * 获取用户信息
      * @param commit
      * @param state
-     * @param userInfo
      */
-    getUserInfo({ commit }, userInfo) {
+    getUserInfo({ commit }) {
+      // 获取用户信息
+      let userInfo = {
+        userName: "admin",
+      }
       commit("SET_USERNAME", userInfo.userName);
       commit("SET_USERINFO", userInfo);
     },

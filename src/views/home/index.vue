@@ -5,6 +5,7 @@
     <van-button type="info">信息按钮</van-button>
     <van-button type="warning">警告按钮</van-button>
     <van-button type="danger">危险按钮</van-button>
+    <van-button type="primary" @click="getUserInfo">获取用户信息</van-button>
     <br />
     <div id="echars"></div>
     <p>
@@ -15,6 +16,7 @@
 
 <script>
 // @ is an alias to /src
+import {getUserInfoApi} from "@/api";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   name: "HomeIndex",
@@ -39,15 +41,26 @@ export default {
     };
   },
   computed: {
-    ...mapActions({
-      setUserInfo: "user/SET_USERINFO",
-    }),
-    ...mapMutations(["user/getUserInfo"]),
+    ...mapGetters(["userInfo"]),
   },
   mounted() {
     let myChart = this.$echarts.init(document.getElementById("echars"));
     myChart.setOption(this.option, true);
+    this.sc_user_getUserInfo()
   },
+  methods:{
+    ...mapMutations({
+      sm_user_SET_USERINFO: "user/SET_USERINFO", // 调用 this.store_SET_USERINFO()
+    }),
+    ...mapActions({
+      sc_user_getUserInfo:"user/getUserInfo" // 调用 this.store_getUserInfo()
+    }),
+    getUserInfo() {
+      getUserInfoApi().then((res) => {
+        console.log(res);
+      });
+    }
+  }
 };
 </script>
 <style scoped lang="less">

@@ -1,9 +1,9 @@
 <template>
   <div class="">
-    <van-button type="primary" @click="routerRedirect()"
+    <van-button type="primary" @click="routerRedirect"
       >未登录跳转
     </van-button>
-    <van-button type="primary" @click="login()">登录跳转 </van-button>
+    <van-button type="primary" @click="login">登录跳转 </van-button>
     <van-search v-model="value" placeholder="请输入搜索关键词" />
 
     <p class="wz">
@@ -12,6 +12,8 @@
   </div>
 </template>
 <script>
+import {userLogin} from "@/api";
+
 export default {
   name: "Login",
   components: {},
@@ -19,6 +21,7 @@ export default {
   props: {},
   data() {
     return {
+      redirect:this.$route.query.redirect || "/home",
       value: "",
     };
   },
@@ -28,13 +31,17 @@ export default {
   mounted() {},
   methods: {
     routerRedirect() {
-      const { query } = this.$route;
-      this.$router.replace(query.redirect || "/home");
+      this.$cookies.remove("token");
+      this.$router.replace(this.redirect || "/home");
     },
     login() {
-      this.$cookies.set("token", "123");
-      const { query } = this.$route;
-      this.$router.replace(query.redirect || "/home");
+      let millisecond = new Date().getTime();
+      let expiresTime = new Date(millisecond + 7000 * 1000);
+      userLogin().then(res => {
+        this.$cookies.set("token",res.data.result.token, expiresTime);
+        this.$router.replace(this.redirect || "/home");
+      });
+
     },
   },
 };

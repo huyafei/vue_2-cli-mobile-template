@@ -1,9 +1,15 @@
 import axios from "../utils/axios";
 
-export function getAppToken(authCode) {
+export function userLogin(data) {
   return axios({
-    url: `/test/login`,
+    url: `/user/userLogin`,
     method: "post",
-    data: { code: authCode },
+    data,
+  });
+}
+export function getUserInfoApi() {
+  return axios({
+    url: `/user/getUserInfo`,
+    method: "post",
   });
 }
