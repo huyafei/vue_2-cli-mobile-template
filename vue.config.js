@@ -5,14 +5,14 @@ const CompressionWebpackPlugin = require("compression-webpack-plugin");
 // 压缩 js 去除 console.log
 const UglifyjsWebpackPlugin = require("uglifyjs-webpack-plugin");
 
-const publicPath = process.env.VUE_APP_publicPath;
+const publicPath = process.env.VUE_APP_PROJECT_BASE;
 const isProduction = process.env.NODE_ENV === "production";
-const resolve = dir => path.resolve(__dirname, dir);
+const resolve = (dir) => path.resolve(__dirname, dir);
 
 // 样式和js的CDN外链，会插入到index.html中
 const cdn = {
   css: [],
-  js: []
+  js: [],
 };
 
 // 外部扩展，即外部引入对象与内部引用时的对象配置
@@ -40,7 +40,7 @@ module.exports = defineConfig({
     // allowedHosts:[], // 允许访问的域名
     // https: false, // https:{type:Boolean}
     // open: true, // 配置自动启动浏览器
-    port: 9527 // 端口
+    port: 9527, // 端口
     // host:'0.0.0.0', // 设置0.0.0.0则所有的地址都能访问
     // host: 'wxtest.com',
     // proxy: "http://localhost:9527" // 配置跨域处理,只有一个代理
@@ -48,9 +48,10 @@ module.exports = defineConfig({
     // 配置或多个代理
     // proxy: {
     //   "/api": {
-    //     target: "http://192.168.0.188:8080",// 设置调用的接口域名和端口号
-    //     ws: true, // 代理websocket
+    //     target: "http://example-development.com",// 设置调用的接口域名和端口号
     //     changeOrigin: true,
+
+    //     ws: true, // 代理websocket
     //     pathRewrite: { // 路径重写
     //       "^/api": ""
     //     }
@@ -78,11 +79,18 @@ module.exports = defineConfig({
         // additionalData: `@import "~@/variables.scss";`
       },
       less: {
-        // @/ 是 src/ 的别名
-        // data: `@import "~@/assets/less/color.less";`
+        lessOptions: {
+          modifyVars: {
+            // 直接覆盖变量
+            // 'text-color': '#111',
+            // 'border-color': '#eee',
+            // 或者可以通过 less 文件覆盖（文件路径为绝对路径）
+            hack: `true; @import "@/assets/styles/less/vant.less";`,
+          },
+        },
       },
-      postcss: {}
-    }
+      postcss: {},
+    },
   },
   // webpack 配置， 可以是{}，或者是函数返回合并对象或直接修改(config ) => {}
   configureWebpack: (config) => {
@@ -92,13 +100,16 @@ module.exports = defineConfig({
       resolve: {
         alias: {
           "@": resolve("src"),
-          "@utils": resolve("src/utils"),
           "@api": resolve("src/api"),
+          "@assets": resolve("src/assets"),
           "@components": resolve("src/components"),
-          "@views": resolve("src/views")
-        }
+          "@router": resolve("src/router"),
+          "@plugins": resolve("src/plugins"),
+          "@utils": resolve("src/utils"),
+          "@views": resolve("src/views"),
+        },
       },
-      plugins: []
+      plugins: [],
     };
     //返回一个将要合并的对象
     if (isProduction) {
@@ -115,7 +126,7 @@ module.exports = defineConfig({
           test: /\.jpg$|\.js$|\.html$|\.css$|\.less/, // 匹配文件名
           threshold: 10240, // 对超过10k的数据压缩
           deleteOriginalAssets: false, // 删除源文件，不建议开启
-          minRatio: 0.8 // 只有压缩率小于这个值的资源才会被处理
+          minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
         })
       );
     } else {
@@ -132,9 +143,7 @@ module.exports = defineConfig({
      * https://cli.vuejs.org/zh/guide/html-and-static-assets.html#preload
      * 而且预渲染时生成的 prefetch 标签是 modern 版本的，低版本浏览器是不需要的
      */
-    config.plugins
-      .delete("prefetch")
-      .delete("preload");
+    config.plugins.delete("prefetch").delete("preload");
     const types = ["vue-modules", "vue", "normal-modules", "normal"];
     types.forEach((type) =>
       addStyleResource(config.module.rule("less").oneOf(type))
@@ -146,7 +155,7 @@ module.exports = defineConfig({
     /**
      * 添加CDN参数到htmlWebpackPlugin配置中
      */
-    config.plugin("html").tap(args => {
+    config.plugin("html").tap((args) => {
       args[0].cdn = cdn;
       return args;
     });
@@ -163,10 +172,10 @@ module.exports = defineConfig({
             compress: {
               drop_console: true,
               drop_debugger: false,
-              pure_funcs: ["console.log"] // 生产环境自动删除 console
+              pure_funcs: ["console.log"], // 生产环境自动删除 console
             },
-            warnings: false
-          }
+            warnings: false,
+          },
         })
       );
       // 图片压缩
@@ -183,7 +192,6 @@ module.exports = defineConfig({
       //   });
     } else {
       // 为开发环境修改配置...
-
     }
   },
   // PWA 插件相关配置
@@ -191,7 +199,7 @@ module.exports = defineConfig({
   // 第三方插件配置
   pluginOptions: {
     // ...
-  }
+  },
 });
 
 function addStyleResource(rule) {
@@ -200,8 +208,7 @@ function addStyleResource(rule) {
     .loader("style-resources-loader")
     .options({
       patterns: [
-        path.resolve(__dirname, "./src/assets/styles/less/color.less"),
-        path.resolve(__dirname, "./src/assets/styles/less/mixin.less")
-      ]
+        path.resolve(__dirname, "./src/assets/styles/less/mixin.less"),
+      ],
     });
 }

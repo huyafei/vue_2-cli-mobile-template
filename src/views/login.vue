@@ -1,18 +1,31 @@
 <template>
-  <div class="">
-    <van-button type="primary" @click="routerRedirect"
-      >未登录跳转
-    </van-button>
-    <van-button type="primary" @click="login">登录跳转 </van-button>
-    <van-search v-model="value" placeholder="请输入搜索关键词" />
-
-    <p class="wz">
-      徐志摩曾说过：“一生中至少该有一次，为了某个人而忘记了自己，不求结果，不求同行，不求曾经拥有，甚至不求你爱我，只求在我最美的年华里，遇见你。”我不知道自己是何等的幸运能在茫茫人海中与你相遇？我也不知道你的出现是恩赐还是劫？但总归要说声“谢谢你，谢谢你曾来过……”，还记得初相识时你那拘谨的样子，话不是很多只是坐在那里听我不停地说着各种不着边际的话。可能因为紧张我也不知道自己想要表达什么？只知道乱七八糟的在说，而你只是静静地听着，偶尔插一两句。想想自己也不知道一个慢热甚至在不熟的人面前不苟言笑的我那天怎么会那么多话？后来才知道那就是你给的莫名的熟悉感和包容吧！
-    </p>
+  <div class="main">
+    <van-form @submit="onSubmit">
+      <van-field
+        v-model="formData.username"
+        name="用户名"
+        label="用户名"
+        placeholder="用户名"
+        :rules="[{ required: true, message: '请填写用户名' }]"
+      />
+      <van-field
+        v-model="formData.password"
+        type="password"
+        name="密码"
+        label="密码"
+        placeholder="密码"
+        :rules="[{ required: true, message: '请填写密码' }]"
+      />
+      <div style="margin: 16px">
+        <van-button round block type="info" native-type="submit"
+          >提交</van-button
+        >
+      </div>
+    </van-form>
   </div>
 </template>
 <script>
-import {userLogin} from "@/api";
+import { userLogin } from "@/api";
 
 export default {
   name: "Login",
@@ -21,8 +34,11 @@ export default {
   props: {},
   data() {
     return {
-      redirect:this.$route.query.redirect || "/home",
-      value: "",
+      formData: {
+        username: "",
+        password: "",
+      },
+      redirectPath: this.$route.query.redirect || "/home",
     };
   },
   computed: {},
@@ -30,25 +46,16 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    routerRedirect() {
-      this.$cookies.remove("token");
-      this.$router.replace(this.redirect || "/home");
-    },
-    login() {
-      let millisecond = new Date().getTime();
-      let expiresTime = new Date(millisecond + 7000 * 1000);
-      userLogin().then(res => {
-        this.$cookies.set("token",res.data.result.token, expiresTime);
-        this.$router.replace(this.redirect || "/home");
-      });
-
+    async onSubmit() {
+      const res = await this.$store.dispatch("user/_userLogin", this.formData);
+      if (res) {
+        const _res = await this.$store.dispatch("user/_getUserInfo");
+        if (_res) {
+          this.$router.replace(this.redirectPath);
+        }
+      }
     },
   },
 };
 </script>
-<style scoped lang="less">
-.wz {
-  font-size: 16px;
-  color: @cl-blue;
-}
-</style>
+<style scoped lang="less"></style>

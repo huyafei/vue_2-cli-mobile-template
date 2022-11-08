@@ -1,7 +1,26 @@
-/*通用class类*/
+@import "base.css";
+
+/*背景颜色*/
+.bg-white {
+  background-color: var(--color-white-background);
+}
+.bg-blue {
+  background-color: var(--color-blue-background);
+}
+.bg-red {
+  background-color: var(--color-red-background);
+}
+.bg-orange {
+  background-color: var(--color-orange-background);
+}
+.bg-green {
+  background-color: var(--color-green-background);
+}
+
 .f-w {
   font-weight: bold;
 }
+
 /* 图片自适应 */
 img.img-auto {
   width: 100%;
@@ -39,6 +58,7 @@ img.img-auto {
 .pointer {
   cursor: pointer;
 }
+
 .hide {
   display: none;
 }
@@ -46,6 +66,7 @@ img.img-auto {
 .show {
   display: block;
 }
+
 /*弹性布局*/
 .flex-r {
   display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
@@ -53,13 +74,16 @@ img.img-auto {
   /*是否换行*/
   /*flex-wrap:wrap;*/
 }
+
 .flex-c {
   display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
   flex-direction: column;
 }
+
 .flex-1 {
   flex: 1;
 }
+
 /*单行溢出省略*/
 .text-cut {
   overflow: hidden;
@@ -75,44 +99,11 @@ img.img-auto {
   -webkit-box-orient: vertical;
 }
 
-.t-a-c {
-  text-align: center;
+.pd-default {
+  padding: 10px 16px;
 }
 
-.t-a-r {
-  text-align: right;
-}
-
-.t-a-l {
-  text-align: left;
-}
-
-.b-s {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-}
-
-/*溢出滚动-兼容ios*/
-/*y*/
-.o-y-s {
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-
-/*x*/
-.o-x-s {
-  overflow-x: scroll;
-  -webkit-overflow-scrolling: touch;
-}
-
-/*溢出隐藏*/
-/*x*/
-.o-y-h {
-  overflow-y: hidden;
-}
-
-/*y*/
-.o-x-h {
-  overflow-x: hidden;
+#app {
+  height: 100%;
+  width: 100%;
 }

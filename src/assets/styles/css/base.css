@@ -1,4 +1,6 @@
-/*通用属性*/
+@import "color.css";
+
+/* global styles */
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -7,15 +9,14 @@
 
 html {
   font-size: 62.5%;
-  font-family: Microsoft YaHei, Arial, sans-serif;
-  color: #333;
-  background-color: #f4f4f4;
+  /*font-family: Microsoft YaHei, Arial, sans-serif;*/
   /*阻止旋转屏幕时自动调整字体大小*/
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   /* 解决IOS默认滑动很卡的情况 */
   -webkit-overflow-scrolling: touch;
 }
+
 html,
 body {
   /*width: 100%;*/
@@ -23,7 +24,17 @@ body {
   margin: 0;
   padding: 0;
 }
-body,
+
+body {
+  font-size: 14px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  color: var(--color-black-text);
+  background-color: var(--color-white-background);
+  line-height: 1.15;
+}
+
 h1,
 h2,
 h3,
@@ -38,36 +49,22 @@ dl,
 dt,
 dd,
 img,
-button,
-pre,
-form,
-blockquote,
-fieldset {
+button {
   margin: 0;
   padding: 0;
   border: none;
 }
 
-address,
-cite,
-code,
-em {
-  font-weight: normal;
-  font-style: normal;
+ul,
+li,
+ol {
+  list-style: none;
 }
-th {
-  font-style: normal;
-}
+
 a {
   text-decoration: none;
   cursor: pointer;
-  color: #4170ff;
-}
-
-a:link {
-}
-
-a:visited {
+  color: var(--color-blue-text);
 }
 
 a:hover,
@@ -80,7 +77,21 @@ a:focus {
   /*text-decoration:line-through;*/
 }
 
-a:hover {
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+table,
+thead,
+tbody,
+tfoot {
+}
+
+tr,
+th,
+td {
 }
 
 textarea,
@@ -92,40 +103,9 @@ option {
   outline: none;
 }
 
-p {
-  /*换行*/
-  word-break: break-all;
-  /*不换行*/
-  /*word-break: normal;*/
-}
-
-img {
-  border: 0;
-  /*border: none;*/
-  vertical-align: middle;
-  background: #fff;
-}
-
 input,
 select {
   vertical-align: middle;
-}
-
-ul,
-li,
-ol {
-  list-style: none;
-}
-
-table td {
-}
-
-sup {
-  vertical-align: text-top;
-}
-
-sub {
-  vertical-align: text-bottom;
 }
 
 article,
@@ -140,6 +120,7 @@ nav,
 section {
   display: block;
 }
+
 span,
 img {
   display: inline-block;

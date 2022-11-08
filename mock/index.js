@@ -1,3 +1,9 @@
+/**
+ * @name: index
+ * @description：index.js
+ * @date: 2022/1/17 17:27
+ * @author: yf_hu
+ */
 import Mock from "mockjs";
 import userApi from "./user";
 
@@ -6,8 +12,6 @@ const mocks = [...userApi];
 Mock.setup({
   timeout: "200-600",
 });
-
-console.log(mocks);
 
 mocks.forEach((item) => {
   Mock.mock(new RegExp(item.url), item.type, item.response);

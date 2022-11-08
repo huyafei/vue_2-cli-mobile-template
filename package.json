@@ -1,26 +1,25 @@
 {
-  "name": "{{projectName}}",
-  "version": "{{version}}",
-  "private": true,
+  "name": "vue_2-cli-mobile-template",
+  "version": "0.0.0",
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "build:dev": "vue-cli-service build --mode dev",
     "build:uat": "vue-cli-service build --mode uat",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.27.2",
+    "@vensst/js-toolkit": "1.0.5-beta.2",
+    "axios": "^1.1.3",
     "core-js": "^3.8.3",
-    "echarts": "^5.3.3",
+    "echarts": "^5.4.0",
     "js-cookie": "^3.0.1",
     "lib-flexible": "^0.3.2",
-    "moment": "^2.29.3",
     "postcss-pxtorem": "^6.0.0",
-    "vant": "^2.12.48",
-    "vue": "^2.6.14",
-    "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
+    "vant": "^2.12.51",
+    "vue": "~2.6.14",
+    "vue-i18n": "~8.28.1",
+    "vue-router": "~3.5.1",
+    "vuex": "~3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -43,6 +42,6 @@
     "style-resources-loader": "^1.5.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vconsole": "^3.14.6",
-    "vue-template-compiler": "^2.6.14"
+    "vue-template-compiler": "~2.6.14"
   }
 }

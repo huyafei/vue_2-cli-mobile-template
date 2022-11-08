@@ -27,13 +27,4 @@ export default {
   mounted() {},
 };
 </script>
-<style lang="less">
-#app {
-  height: 100%;
-  height: calc(100% - constant(safe-area-inset-top));
-  height: calc(100% - env(safe-area-inset-top));
-  padding-top: constant(safe-area-inset-top);
-  padding-top: env(safe-area-inset-top);
-  overflow: hidden;
-}
-</style>
+<style lang="less"></style>

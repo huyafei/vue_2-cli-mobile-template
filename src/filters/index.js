@@ -1,6 +1,6 @@
 // import parseTime, formatTime and set to filter
 export { parseTime, formatTime } from "@/utils";
-import moment from "moment";
+// import moment from "moment";
 /**
  * Show plural label if time is plural number
  * @param {number} time
@@ -72,6 +72,6 @@ export function toThousandFilter(num) {
 export function uppercaseFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
-export function formatDateTime(dateTime, type = "YYYY-MM-DD HH:mm") {
-  return moment(dateTime).format(type);
-}
+// export function formatDateTime(dateTime, type = "YYYY-MM-DD HH:mm") {
+//   return moment(dateTime).format(type);
+// }
