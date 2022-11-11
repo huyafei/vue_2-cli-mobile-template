@@ -9,21 +9,15 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import { i18n } from "./lang";
+import "lib-flexible";
+
 // 引入组件
 import "./components";
 // 加载插件
 import "./plugins";
-import "lib-flexible";
-
-import * as filters from "./filters";
 
 import "./assets/styles/css/main.css";
 import "./assets/styles/less/index.less";
-
-// 注册全局过滤器
-Object.keys(filters).forEach((key) => {
-  Vue.filter(key, filters[key]);
-});
 
 Vue.config.productionTip = false;
 

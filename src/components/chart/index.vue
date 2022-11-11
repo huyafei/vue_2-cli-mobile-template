@@ -4,7 +4,6 @@
  * @date: 2022/10/27 9:34
  * @author: yf_hu
 -->
-
 <template>
   <div class="chart-box" :style="{ width: width, height: height }">
     <div v-if="isShowChart" ref="chartRef" class="chart"></div>

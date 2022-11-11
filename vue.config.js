@@ -79,6 +79,8 @@ module.exports = defineConfig({
         // additionalData: `@import "~@/variables.scss";`
       },
       less: {
+        // @/ 是 src/ 的别名
+        // data: `@import "~@/assets/less/color.less";`
         lessOptions: {
           modifyVars: {
             // 直接覆盖变量
@@ -207,8 +209,6 @@ function addStyleResource(rule) {
     .use("style-resource")
     .loader("style-resources-loader")
     .options({
-      patterns: [
-        path.resolve(__dirname, "./src/assets/styles/less/mixin.less"),
-      ],
+      patterns: [resolve("./src/assets/styles/less/mixin.less")],
     });
 }

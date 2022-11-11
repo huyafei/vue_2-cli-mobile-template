@@ -8,9 +8,7 @@ const user = {
     userInfo: "",
   },
   getters: {
-    name: (state) => {
-      return state.userInfo.name;
-    },
+    name: (state) => state.userInfo.name,
   },
   mutations: {
     SET_USERINFO: (state, userInfo) => {

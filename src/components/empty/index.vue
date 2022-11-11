@@ -4,6 +4,13 @@
  * @date: 2022/10/27 12:46
  * @author: yf_hu
 -->
+<template>
+  <div class="empty">
+    <slot>
+      {{ text }}
+    </slot>
+  </div>
+</template>
 <script>
 export default {
   name: "Empty",
@@ -15,14 +22,6 @@ export default {
   },
 };
 </script>
-
-<template>
-  <div class="empty">
-    <slot>
-      {{ text }}
-    </slot>
-  </div>
-</template>
 <style scoped>
 .empty {
   display: flex;
