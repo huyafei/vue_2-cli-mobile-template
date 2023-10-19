@@ -6,7 +6,6 @@
  */
 
 import axios from "@plugins/modules/axios";
-
 export function userLogin(data) {
   return axios({
     url: `/user/userLogin`,

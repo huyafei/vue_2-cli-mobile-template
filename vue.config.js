@@ -131,6 +131,25 @@ module.exports = defineConfig({
           minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
         })
       );
+
+      newConfig.optimization = {
+        minimizer: [
+          // 去除 console.log
+          new UglifyjsWebpackPlugin({
+            sourceMap: false,
+            // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
+            parallel: true,
+            uglifyOptions: {
+              compress: {
+                drop_console: true,
+                drop_debugger: false,
+                pure_funcs: ["console.log"], // 生产环境自动删除 console
+              },
+              warnings: false,
+            },
+          }),
+        ],
+      };
     } else {
       // 为开发环境修改配置...
     }
@@ -165,21 +184,6 @@ module.exports = defineConfig({
     if (isProduction) {
       // 为生产环境修改配置...
       // 打包优化，去除console.log
-      config.optimization.minimizer.push(
-        new UglifyjsWebpackPlugin({
-          sourceMap: false,
-          // 开启多线程提高打包速度, 默认并发运行数：os.cpus().length - 1
-          parallel: true,
-          uglifyOptions: {
-            compress: {
-              drop_console: true,
-              drop_debugger: false,
-              pure_funcs: ["console.log"], // 生产环境自动删除 console
-            },
-            warnings: false,
-          },
-        })
-      );
       // 图片压缩
       // config.module
       //   .rule("images")

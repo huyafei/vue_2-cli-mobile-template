@@ -23,7 +23,7 @@
       <van-button @click="minus">减</van-button>
       <van-button @click="multiply">乘</van-button>
       <van-button @click="divide">除</van-button>
-      <img :src="`${publicPath}static/tx.jpg`" style="width: 60px">
+      <img :src="`${publicPath}static/tx.jpg`" style="width: 60px" />
     </div>
   </div>
 </template>
@@ -59,8 +59,7 @@ export default {
   computed: {
     ...mapGetters(["user/name"]),
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {},
 };
 </script>
